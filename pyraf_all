@@ -1,0 +1,26 @@
+FROM ubuntu:focal
+
+RUN \
+dpkg --add-architecture i386 && \
+apt-get update
+apt-get install -y libc6:i386 libz1:i386 libncurses5:i386 libbz2-1.0:i386 libuuid1:i386 libxcb1:i386 libxmu6:i386
+
+WORKDIR /tmp
+
+ADD https://repo.anaconda.com/miniconda/Miniconda2-4.1.11-Linux-x86_64.sh /tmp/
+
+RUN \
+bash Miniconda2-4.1.11-Linux-x86_64.sh -b -p /opt/conda && rm Miniconda2-4.1.11-Linux-x86_64.sh
+
+ENV \
+PATH="/opt/conda/bin:${PATH}"
+
+RUN \
+conda config --add channels https://ssb.stsci.edu/astroconda &&\
+conda config --set auto_update_conda False
+
+RUN \
+conda install -y iraf-all pyraf-all stsci
+
+RUN \
+conda clean --all -y
